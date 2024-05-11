@@ -1,11 +1,13 @@
+#include "../../../matplotlibcpp.h"
 #include "../lab1/matrix.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
 
+namespace plt = matplotlibcpp;
 using namespace std;
 
-double cubic_spline(vector<double> &x, vector<double> &y, double dot) {
+double cubic_spline(vector<double> &x, vector<double> &y, double dot, bool print) {
     int n = x.size() - 1;
     vector<double> a(n), b(n), c(n), d(n), h(n);
     for (int i = 0; i < n; ++i) {
@@ -43,7 +45,9 @@ double cubic_spline(vector<double> &x, vector<double> &y, double dot) {
     int interval = it - x.begin() - 1;
     if (interval == -1)
         interval = 0;
-    cout << "S(x) = " << a[interval] << " + " << b[interval] << " * (x - " << x[interval] << ") + " << c[interval] << " * (x - " << x[interval] << ")^2 + " << d[interval] << " * (x - " << x[interval] << ")^3\n";
+    if (print == 1) {
+        cout << "S(x) = " << a[interval] << " + " << b[interval] << " * (x - " << x[interval] << ") + " << c[interval] << " * (x - " << x[interval] << ")^2 + " << d[interval] << " * (x - " << x[interval] << ")^3\n";
+    }
     // S(x) = ai + bi * (x - xi) + ci * (x - xi)^2 + di * (x - xi)^3
     double res = a[interval] + b[interval] * (dot - x[interval]) + c[interval] * pow((dot - x[interval]), 2) + d[interval] * pow((dot - x[interval]), 3);
     return res;
@@ -53,7 +57,17 @@ int main() {
     vector<double> x = {0.1, 0.5, 0.9, 1.3, 1.7};
     vector<double> y = {100.01, 4.2500, 2.0446, 2.2817, 3.2360};
     double dot = 0.8;
-    double res = cubic_spline(x, y, dot);
+    double res = cubic_spline(x, y, dot, 1);
     cout << "y(x*) = " << res << "\n";
+    vector<double> split_x;
+    vector<double> f;
+    for (double i = x[0]; i <= x[x.size() - 1]; i += 0.01) {
+        split_x.push_back(i);
+        f.push_back(cubic_spline(x, y, i, 0));
+    }
+    plt::scatter(x, y, 10, {{"label", "f(x)"}, {"color", "red"}});
+    plt::plot(split_x, f, {{"label", "spline"}});
+    plt::legend();
+    plt::show();
     return 0;
 }

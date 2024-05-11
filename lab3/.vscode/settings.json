@@ -3,6 +3,7 @@
         ".fantomasignore": "ignore",
         "iostream": "cpp",
         "cmath": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "vector": "cpp"
     }
 }

@@ -1,7 +1,9 @@
+#include "../../../matplotlibcpp.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
 
+namespace plt = matplotlibcpp;
 using namespace std;
 
 vector<double> mult(vector<double> a, vector<double> b) {
@@ -88,6 +90,18 @@ double f(double x) {
     return 1 / (x * x) + x * x;
 }
 
+vector<double> at(vector<double> &x, vector<double> &p) {
+    vector<double> res;
+    for (int i = 0; i < x.size(); ++i) {
+        double tmp = 0;
+        for (int j = 0; j < p.size(); ++j) {
+            tmp += p[j] * pow(x[i], j);
+        }
+        res.push_back(tmp);
+    }
+    return res;
+}
+
 int main() {
     vector<double> x = {0.1, 0.5, 0.9, 1.3};
     vector<double> y;
@@ -109,7 +123,6 @@ int main() {
     }
     cout << "f(x*) = " << res << "\n";
     cout << "error = " << abs(f(X) - res) << "\n";
-
     cout << "\nPolynom Newton:\n";
     vector<double> polynom_n = newton_polynom(x, y);
     for (int i = 0; i < polynom_n.size(); ++i) {
@@ -124,5 +137,16 @@ int main() {
     }
     cout << "f(x*) = " << res << "\n";
     cout << "error = " << abs(f(X) - res) << "\n";
+    vector<double> split_x;
+    for (double i = x[0]; i <= x[x.size() - 1]; i += 0.01) {
+        split_x.push_back(i);
+    }
+    vector<double> f = at(split_x, polynom_l);
+    plt::scatter(x, y, 10, {{"label", "f(x)"}, {"color", "red"}});
+    plt::plot(split_x, f, {{"label", "polynom lagrange"}});
+    plt::legend();
+    plt::show();
     return 0;
 }
+
+// g++ lab3_1.cpp -I//usr/include/python3.10 -lpython3.10 && ./a.out

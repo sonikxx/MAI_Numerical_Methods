@@ -32,23 +32,36 @@ vector<double> mnk(vector<double> &x, vector<double> &y, int m) {
     return polynom;
 }
 
-vector<double> error(vector<double> &x, vector<double> &y, vector<double> &p) {
+vector<double> at(vector<double> &x, vector<double> &p) {
     vector<double> res;
+    for (int i = 0; i < x.size(); ++i) {
+        double tmp = 0;
+        for (int j = 0; j < p.size(); ++j) {
+            tmp += p[j] * pow(x[i], j);
+        }
+        res.push_back(tmp);
+    }
+    return res;
+}
+
+void error(vector<double> &x, vector<double> &y, vector<double> &p) {
     double f_x = 0, error = 0;
     for (int i = 0; i < x.size(); ++i) {
         f_x = 0;
         for (int j = 0; j < p.size(); ++j) {
             f_x += p[j] * pow(x[i], j);
         }
-        res.push_back(f_x);
         error += (f_x - y[i]) * (f_x - y[i]);
     }
     cout << "error = " << error << "\n\n";
-    return res;
 }
 
 int main() {
     vector<double> x = {0.0, 1.7, 3.4, 5.1, 6.8, 8.5};
+    vector<double> split_x;
+    for (double i = x[0]; i <= x[x.size() - 1]; i += 0.1) {
+        split_x.push_back(i);
+    }
     vector<double> y = {0.0, 1.3038, 1.8439, 2.2583, 2.6077, 2.9155};
     vector<double> polynom = mnk(x, y, 1);
     cout << "MNK polynom 1:\n";
@@ -58,7 +71,8 @@ int main() {
         else
             cout << polynom[i] << "x^" << i << "\n";
     }
-    vector<double> z = error(x, y, polynom);
+    error(x, y, polynom);
+    vector<double> z = at(split_x, polynom);
     polynom.clear();
     polynom = mnk(x, y, 2);
     cout << "MNK polynom 2:\n";
@@ -68,10 +82,11 @@ int main() {
         else
             cout << polynom[i] << "x^" << i << "\n";
     }
-    vector<double> w = error(x, y, polynom);
-    plt::plot(x, y, {{"label", "f(x)"}});
-    plt::plot(x, z, {{"label", "polynom 1"}});
-    plt::plot(x, w, {{"label", "polynom 2"}});
+    error(x, y, polynom);
+    vector<double> w = at(split_x, polynom);
+    plt::scatter(x, y, 10, {{"label", "f(x)"}, {"color", "red"}});
+    plt::plot(split_x, z, {{"label", "polynom 1"}});
+    plt::plot(split_x, w, {{"label", "polynom 2"}});
     plt::legend();
     plt::show();
     return 0;
