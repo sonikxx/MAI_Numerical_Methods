@@ -1,5 +1,16 @@
 #include "./lab4_1.h"
 
+vector<double> f(double x, double y, double z) {
+    vector<double> F(2);
+    F[0] = z;
+    F[1] = (-2 * pow(x, 3) * z - y) / pow(x, 4);
+    return F;
+}
+
+double calc_exact_y(double x) {
+    return (sin(1) + cos(1)) * cos(1 / x) + (sin(1) - cos(1)) * sin(1 / x);
+}
+
 pair<vector<double>, vector<double>> method_euler(double x_start, double x_finish, double h, double y0, double z0) {
     int n = (x_finish - x_start) / h;
     vector<double> X(n + 1), Y(n + 1), Z(n + 1);
@@ -38,7 +49,7 @@ pair<vector<double>, vector<double>> first_improved_method_euler(double x_start,
     return {X, Y};
 }
 
-pair<vector<double>, vector<double>> first_method_euler_cauchy(double x_start, double x_finish, double h, double y0, double z0) {
+pair<vector<double>, vector<double>> method_euler_recalculation(double x_start, double x_finish, double h, double y0, double z0) {
     int n = (x_finish - x_start) / h;
     vector<double> X(n + 1), Y(n + 1), Y_tmp(n + 1), Z(n + 1), Z_tmp(n + 1);
     for (int i = 0; i <= n; ++i) {
@@ -58,14 +69,14 @@ pair<vector<double>, vector<double>> first_method_euler_cauchy(double x_start, d
 }
 
 int main() {
-    auto [X_h1, Y_h1] = method_euler(1, 2, 0.1, 6, 8);
-    auto [X_h2, Y_h2] = method_euler(1, 2, 0.05, 6, 8);
-    print("Method Euler:", X_h1, Y_h1, Y_h2, 1);
-    auto [X2_h1, Y2_h1] = first_improved_method_euler(1, 2, 0.1, 6, 8);
-    auto [X2_h2, Y2_h2] = first_improved_method_euler(1, 2, 0.05, 6, 8);
-    print("\n\nFirst improved method Euler:", X2_h1, Y2_h1, Y2_h2, 2);
-    auto [X3_h1, Y3_h1] = first_method_euler_cauchy(1, 2, 0.1, 6, 8);
-    auto [X3_h2, Y3_h2] = first_method_euler_cauchy(1, 2, 0.05, 6, 8);
-    print("\n\nFirst method Euler-Cauchy:", X3_h1, Y3_h1, Y2_h2, 2);
+    auto [X_h1, Y_h1] = method_euler(1, 2, 0.1, 1, 1);
+    auto [X_h2, Y_h2] = method_euler(1, 2, 0.05, 1, 1);
+    print(calc_exact_y, "Method Euler:", X_h1, Y_h1, Y_h2, 1);
+    auto [X2_h1, Y2_h1] = first_improved_method_euler(1, 2, 0.1, 1, 1);
+    auto [X2_h2, Y2_h2] = first_improved_method_euler(1, 2, 0.05, 1, 1);
+    print(calc_exact_y, "\n\nFirst improved method Euler:", X2_h1, Y2_h1, Y2_h2, 2);
+    auto [X3_h1, Y3_h1] = method_euler_recalculation(1, 2, 0.1, 1, 1);
+    auto [X3_h2, Y3_h2] = method_euler_recalculation(1, 2, 0.05, 1, 1);
+    print(calc_exact_y, "\n\nFirst method Euler Recalculation:", X3_h1, Y3_h1, Y2_h2, 2);
     return 0;
 }

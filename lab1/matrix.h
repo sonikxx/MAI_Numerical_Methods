@@ -297,16 +297,6 @@ public:
             }
             Q.push_back((B(i, 0) - (*this)(i, i - 1) * Q[i - 1]) / ((*this)(i, i) + (*this)(i, i - 1) * P[i - 1])); // Q_i = (d_i - a_i * Q_i-1) / (b_i + a_i * P_i-1)
         }
-        // cout << "P:\n";
-        // for (int i = 0; i < P.size(); ++i) {
-        //     cout << P[i] << " ";
-        // }
-        // cout << "\n";
-        // cout << "Q:\n";
-        // for (int i = 0; i < Q.size(); ++i) {
-        //     cout << Q[i] << " ";
-        // }
-        // cout << "\n";
         Matrix X(n, 1);
         X(n - 1, 0) = Q[n - 1];
         for (int i = n - 2; i >= 0; --i) {
@@ -339,10 +329,6 @@ public:
             Alpha(i, i) = 0;
             Beta(i, 0) = B(i, 0) / (*this)(i, i);
         }
-        // cout << "Alpha:\n";
-        // Alpha.ShowMatrix();
-        // cout << "Beta:\n";
-        // Beta.ShowMatrix();
         Matrix X(n, 1), Prev_X(n, 1);
         int k = 1;
         Prev_X = Beta;
@@ -364,8 +350,6 @@ public:
                 eps_k = norm / (1 - norm) * (X - Prev_X).norm();
             }
             ++k;
-            // cout << "X:\n";
-            // X.ShowMatrix();
         }
         return {X, k};
     }
